@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMS | Edit Book</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <%- include('../common/header') %>
+    <main class="container-fluid p-4">
+      <h1 class="page-title">Add Book</h1>
+      <form method="post" action="/edit-book-submit" style="width: 20rem">
+        <input type="hidden" name="bookId" value="<%= book._id %>">
+        <div class="mb-3">
+          <label for="title" class="form-label">Book Title</label>
+          <input
+            type="text" required value="<%= book.title %>" id="title" name="title" class="form-control" placeholder="e.g. Harry Potter"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Price:</label>
+          <input
+            type="text"
+            required
+            value="<%= book.price %>"
+            id="price"
+            name="price"
+            placeholder="e.g. 100"
+            class="form-control"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="publicationDate" class="form-label">
+            Publication Date:
+          </label>
+          <input
+            type="date"
+            required
+            value="<%= book.publicationDate %>"
+            id="publicationDate"
+            name="publicationDate"
+            placeholder="e.g. 2024/02/21"
+            class="form-control"
+          />
+        </div>
+        <div class="d-flex align-items-center gap-4 mb-3 pt-3">
+          <a href="/books" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </main>
+    <%- include('../common/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

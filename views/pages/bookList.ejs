@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS | Book List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <%- include('../common/header')  %>
+    <main class="container-fluid p-4">
+        <div class="d-flex align-items-center gap-4">
+            <h1 class="page-title">Books</h1>
+            <a href="/add-book" class="btn btn-primary my-3">Add a Book</a>
+        </div>
+        <table class="table table-striped mt-3">
+            <thead>
+                <th scope="col">Book Title</th>
+                <th scope="col">Price</th>
+                <th scope="col">Publication Date</th>
+                <th scope="col">Operations</th>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < books.length; i++) { %>
+                    <tr>
+                      <td><%= books[i].title %></td>
+                      <td><%= books[i].price %></td>
+                      <td><%= books[i].publicationDate %></td>
+                      <td>
+                        <form action="/edit-book">
+                            <input type="hidden" name="bookId" value="<%= books[i]._id %>">
+                            <button type="submit" class="btn btn-link btn-sm">Edit Book</button>
+                        </form>
+                      </td>
+                    </tr>
+                 <% } %>
+            </tbody>
+        </table>
+    </main>
+    <%- include('../common/footer')  %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -15,9 +15,9 @@ const port = process.env.PORT || 3000;
 const DB_URL = process.env.DB_URL || "";
 
 // configure the views folder for rendering the views
-app.set("views", path.join(__dirname, "views")); 
+app.set("views", path.join(__dirname, "views"));
 // set up app to use EJS as template engine
-app.set("view engine", "ejs"); 
+app.set("view engine", "ejs");
 
 // Serves static files (we need it to import a css file)
 app.use(express.static("public"));
@@ -31,9 +31,9 @@ app.use(express.json());
 const client = new MongoClient(DB_URL);
 
 //Render the home page
-app.get('/', (_, res) => {
-  res.render('./pages/index');
-})
+app.get("/", (_, res) => {
+  res.render("./pages/index");
+});
 
 // render the list of books
 app.get("/books", async (req, res) => {
@@ -50,9 +50,20 @@ app.get("/add-book", (req, res) => {
 
 app.post("/add-book-submit", async (req, res) => {
   // extract the request body as title, price, and publicationdate.
-  const { title, price, publicationDate } = req.body;
+  let isAddToReadingList = false;
+  const { title, price, publicationDate, addToReadingList } = req.body;
+
+  // check if the checkbox is clicked or not
+  if (addToReadingList) {
+    isAddToReadingList = true;
+  }
   // pass into the addBook function
-  await addBook({ title, price, publicationDate });
+  await addBook({
+    title,
+    price,
+    publicationDate,
+    addToReadingList: isAddToReadingList,
+  });
   res.redirect("/books");
 });
 
@@ -71,14 +82,32 @@ app.get("/edit-book", async (req, res) => {
 
 app.post("/edit-book-submit", async (req, res) => {
   // extract the req body
-  const { bookId, title, price, publicationDate } = req.body;
+  let isAddToReadingList = false;
+  const { bookId, title, price, publicationDate, addToReadingList } = req.body;
 
   // convert the id to object id for the update one filter
   const _id = { _id: new ObjectId(bookId) };
 
+  // check if the checkbox is checked or not
+  if (addToReadingList) {
+    isAddToReadingList = true;
+  }
   // pass the data and the id to the updateBook API.
-  await updateBook(_id, { title, price, publicationDate });
+  await updateBook(_id, {
+    title,
+    price,
+    publicationDate,
+    addToReadingList: isAddToReadingList,
+  });
   res.redirect("/books");
+});
+
+// render the list of books added in reading list
+app.get("/reading-list", async (req, res) => {
+  // get all reaading list books
+  const books = await getAllReadingListBooks();
+  // pass it to the reading-list page
+  res.render("./pages/reading-list", { books });
 });
 
 //Makes the app listen to port 3000
@@ -88,7 +117,7 @@ app.listen(port, () =>
 
 // MONGODB FUNCTIONS
 async function connection() {
-  db = client.db("library"); 
+  db = client.db("library");
   return db;
 }
 
@@ -96,6 +125,16 @@ async function connection() {
 async function getAllBooks() {
   db = await connection();
   let results = db.collection("books").find({});
+  let res = await results.toArray();
+  return res;
+}
+
+// Function to select all books from database where addToReadingList is true
+async function getAllReadingListBooks() {
+  db = await connection();
+  let results = db.collection("books").find({
+    addToReadingList: true,
+  });
   let res = await results.toArray();
   return res;
 }
@@ -117,5 +156,5 @@ async function addBook(bookData) {
 // Function to update a book
 async function updateBook(bookId, bookData) {
   db = await connection();
-  await db.collection("books").updateOne(bookId, {$set: bookData});
+  await db.collection("books").updateOne(bookId, { $set: bookData });
 }
